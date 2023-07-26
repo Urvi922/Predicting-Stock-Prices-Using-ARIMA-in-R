@@ -1,0 +1,78 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cvs_health, echo=FALSE}
+library('tidyverse')
+library('forecast')
+library('ggplot2')
+library('xts')
+library('urca')
+library('tseries')
+library('lmtest')
+library("TTR")
+
+CVSH <- read.csv("C:/Users/Desktop/WATERLOO/MSCI 718/project/CVS_final.csv")
+
+obj_cvsh <- ts(CVSH$Close, start = c(2018,01,03), frequency = 251)
+adf.test(obj_cvsh)
+
+autoplot(obj_cvsh) + ggtitle('Autoplot for cvs_health stock')
+plot(decompose(obj_cvsh))
+
+new_obj_cvsh <- diff(obj_cvsh)
+autoplot(new_obj_cvsh) + ggtitle('Autoplot for cvs_health stock')
+
+adf.test(new_obj_cvsh)
+
+# acf and pacf to check partial correlation
+tsdisplay(new_obj_cvsh, lag.max = 500)
+
+#myarima <- Arima(obj_cvsh, order = c(0,1,0))
+myarima <- Arima(obj_cvsh, order = c(0,1,0), seasonal = c(0,1,0))
+myarima
+checkresiduals(myarima)
+
+# forecasting using the trained arima model
+arimafor <- forecast(myarima, h = 252)
+plot(arimafor)
+plot(arimafor, xlim = c(2021,2021.5))
+```
+```{r bkhw, echo=FALSE}
+library('tidyverse')
+library('forecast')
+library('ggplot2')
+library('xts')
+library('urca')
+library('tseries')
+library('lmtest')
+library("TTR")
+
+BKHW <- read.csv("C:/Users/Desktop/WATERLOO/MSCI 718/project/bhw.csv")
+
+obj_bkhw <- ts(BKHW$Close, start = c(2018,01,02), frequency = 251)
+adf.test(obj_bkhw)
+
+autoplot(obj_bkhw) + ggtitle('Autoplot for amazon stock')
+plot(decompose(obj_bkhw))
+
+new_obj_bkhw <- diff(obj_bkhw)
+autoplot(new_obj_bkhw) + ggtitle('Autoplot for cvs_health stock')
+
+adf.test(new_obj_bkhw)
+
+
+# acf and pacf to check partial correlation
+tsdisplay(new_obj_bkhw, lag.max = 20)
+
+#myarima <- Arima(obj_cvsh, order = c(0,1,0))
+myarima <- Arima(obj_bkhw, order = c(9,1,9))
+myarima
+checkresiduals(myarima)
+
+# forecasting using the trained arima model
+arimafor <- forecast(myarima, h = 252)
+plot(arimafor)
+plot(arimafor, xlim = c(2021,2021.5))
+```
